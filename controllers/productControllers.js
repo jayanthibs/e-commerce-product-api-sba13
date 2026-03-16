@@ -1,5 +1,6 @@
 import Product from "../models/Product.js";
 
+//POST Request logic
 export async function createProduct(req, res) {
   try {
     const newProduct = await Product.create(req.body);
@@ -9,7 +10,7 @@ export async function createProduct(req, res) {
     res.status(400).json({ message: error.message });
   }
 }
-
+//GET Single Product based on the id
 export async function getProduct(req, res) {
   try {
     const { id } = req.params;
@@ -20,25 +21,21 @@ export async function getProduct(req, res) {
     res.status(404).json({ message: `Product with ${id} is not found` });
   }
 }
-
+//PUT to update a single product
 export async function updateProduct(req, res) {
   try {
     const { id } = req.params;
     const options = {
       new: true,
     };
-    const updateProduct = await Product.findByIdAndUpdate(
-      id,
-      req.body,
-      options,
-    );
+    const updateProduct = await Product.findByIdAndUpdate( id, req.body, options );
     console.log(updateProduct);
     res.status(201).json(updateProduct);
   } catch (error) {
     res.status(404).json({ message: `Product with ${id} is not found` });
   }
 }
-
+//DELETE to delete a single product
 export async function deleteProduct(req, res) {
   try {
     const { id } = req.params;
@@ -53,7 +50,7 @@ export async function deleteProduct(req, res) {
     res.status(400).json({ message: error.message });
   }
 }
-
+//GET all products based on the optional category, minPrice, maxPrice, sortBy , page and limit filters
 export async function getProducts(req, res) {
   try {
     const { category, minPrice, maxPrice, sortBy } = req.query;
@@ -79,7 +76,7 @@ export async function getProducts(req, res) {
       .skip((page - 1) * limit)
       .limit(limit);
 
-      
+
     console.log(products);
     res.status(200).json(products);
   } catch (error) {

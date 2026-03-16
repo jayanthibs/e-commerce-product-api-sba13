@@ -9,6 +9,7 @@ const port = 3000;
 connectDB();
 
 app.use(express.json());
+//mounting router with the base URL
 app.use('/', router);
 
 
