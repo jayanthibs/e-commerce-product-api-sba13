@@ -62,18 +62,16 @@ export async function getProducts(req, res) {
     const products = await Product.find({
       $or: [
         { category: category },
-        { minPrice: minPrice },
-        { maxPrice: maxPrice },
-      ]
+        { price: { $gte: minPrice } },
+        { price: { $lte: maxPrice } },
+      ],
     })
       .sort({ price: sortBy })
       .skip((page - 1) * limit)
       .limit(limit);
 
-
     console.log(products);
     res.status(200).json(products);
-
   } catch (error) {
     res.status(404).json({ message: `Product with ${id} is not found` });
   }
