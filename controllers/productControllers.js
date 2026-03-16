@@ -73,6 +73,6 @@ export async function getProducts(req, res) {
     console.log(products);
     res.status(200).json(products);
   } catch (error) {
-    res.status(404).json({ message: `Product with ${id} is not found` });
+    res.status(400).json({ message: error.message });
   }
 }
