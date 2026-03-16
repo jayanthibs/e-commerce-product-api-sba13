@@ -43,7 +43,7 @@ export async function deleteProduct(req, res) {
   try {
     const { id } = req.params;
     const deletedProduct = await Product.findByIdAndDelete(id);
-    if (!deleteProduct) {
+    if (!deletedProduct) {
       res.status(404).json({ message: `Product with ${id} is not found` });
     } else {
       console.log(deletedProduct);
@@ -57,19 +57,29 @@ export async function deleteProduct(req, res) {
 export async function getProducts(req, res) {
   try {
     const { category, minPrice, maxPrice, sortBy } = req.query;
-    const page = req.query.page || 1;
-    const limit = req.query.limit || 10;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+
     const products = await Product.find({
-      $or: [
-        { category: category },
-        { price: { $gte: minPrice } },
-        { price: { $lte: maxPrice } },
-      ],
+      ...(category && { category }),
+      ...((minPrice || maxPrice) && {
+        price: {
+          ...(minPrice && { $gte: Number(minPrice) }),
+          ...(maxPrice && { $lte: Number(maxPrice) }),
+        },
+      }),
     })
-      .sort({ price: sortBy })
+      .sort(
+        sortBy === "price_asc"
+          ? { price: 1 }
+          : sortBy === "price_desc"
+            ? { price: -1 }
+            : {},
+      )
       .skip((page - 1) * limit)
       .limit(limit);
 
+      
     console.log(products);
     res.status(200).json(products);
   } catch (error) {
